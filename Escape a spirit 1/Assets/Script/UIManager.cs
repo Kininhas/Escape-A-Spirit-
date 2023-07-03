@@ -11,9 +11,12 @@ public class UIManager : MonoBehaviour
     public GameObject audioMenu;
 
     private GameObject activeMenu;
+    private LanguageSelection languageSelection;
 
     private void Start()
     {
+        languageSelection = LanguageSelection.instance;
+
         // No início, mostramos apenas o menu de idiomas
         ShowLanguageMenu();
     }
@@ -24,6 +27,11 @@ public class UIManager : MonoBehaviour
         {
             HideMenusExcept(languageMenu);
             Debug.Log("Tela: Idiomas");
+
+            if (languageSelection != null)
+            {
+                languageSelection = LanguageSelection.instance;
+            }
         }
     }
 
@@ -58,10 +66,11 @@ public class UIManager : MonoBehaviour
     {
         if (activeMenu != null)
         {
-            activeMenu.SetActive(true);
+            activeMenu.SetActive(false);
         }
 
         menuToKeepVisible.SetActive(true);
         activeMenu = menuToKeepVisible;
     }
 }
+
