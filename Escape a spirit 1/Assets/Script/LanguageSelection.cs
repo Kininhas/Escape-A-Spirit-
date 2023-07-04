@@ -1,3 +1,4 @@
+Ôªøusing System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,8 @@ public enum SupportedLanguage
     French,
     English,
     Spanish,
-    Portuguese
+    Portuguese,
+    Korean
 }
 
 public class LanguageSelection : MonoBehaviour
@@ -18,10 +20,15 @@ public class LanguageSelection : MonoBehaviour
     public List<SupportedLanguage> supportedLanguages;
     public List<Button> languageButtons;
     public List<Button> buttonsToUpdateText;
+    public GameObject languageConfirmationCanvas;
+    public string translationKey;
 
+    private Button button;
+    private Text buttonText;
     private SupportedLanguage selectedLanguage;
 
     private Dictionary<string, Dictionary<SupportedLanguage, string>> translations;
+    private const string LanguageIndexKey = "SelectedLanguageIndex";
 
     private void Awake()
     {
@@ -41,84 +48,110 @@ public class LanguageSelection : MonoBehaviour
     {
         InitializeTranslations();
 
-        selectedLanguage = SupportedLanguage.English;
+        // Recupera o √≠ndice do idioma selecionado do PlayerPrefs (se existir)
+        int savedLanguageIndex = PlayerPrefs.GetInt(LanguageIndexKey, -1);
+        if (savedLanguageIndex >= 0 && savedLanguageIndex < supportedLanguages.Count)
+        {
+            selectedLanguage = supportedLanguages[savedLanguageIndex];
+        }
+        else
+        {
+            selectedLanguage = SupportedLanguage.English;
+        }
 
         UpdateButtonTexts();
 
-        // Adicione os eventos de clique aos botıes de idioma
+        // Adicione os eventos de clique aos bot√µes de idioma
         for (int i = 0; i < languageButtons.Count; i++)
         {
-            int index = i; // Armazena o Ìndice atual em uma vari·vel tempor·ria
+            int index = i; // Armazena o √≠ndice atual em uma vari√°vel tempor√°ria
             languageButtons[i].onClick.AddListener(() => SetLanguage(index));
         }
     }
+
 
     private void InitializeTranslations()
     {
         translations = new Dictionary<string, Dictionary<SupportedLanguage, string>>();
 
-        // Adicione as traduÁıes para cada idioma suportado
+        // Adicione as tradu√ß√µes para cada idioma suportado
         AddTranslation("PLAY", SupportedLanguage.French, "Jouer");
         AddTranslation("PLAY", SupportedLanguage.English, "Play");
         AddTranslation("PLAY", SupportedLanguage.Spanish, "Jugar");
         AddTranslation("PLAY", SupportedLanguage.Portuguese, "Jogar");
+        AddTranslation("PLAY", SupportedLanguage.Korean, "Ïû¨ÏÉù");
 
-        AddTranslation("SETTINGS", SupportedLanguage.French, "ParamËtres");
+        AddTranslation("SETTINGS", SupportedLanguage.French, "Param√®tres");
         AddTranslation("SETTINGS", SupportedLanguage.English, "Settings");
-        AddTranslation("SETTINGS", SupportedLanguage.Spanish, "ConfiguraciÛn");
-        AddTranslation("SETTINGS", SupportedLanguage.Portuguese, "ConfiguraÁıes");
+        AddTranslation("SETTINGS", SupportedLanguage.Spanish, "Configuraci√≥n");
+        AddTranslation("SETTINGS", SupportedLanguage.Portuguese, "Configura√ß√µes");
+        AddTranslation("SETTINGS", SupportedLanguage.Korean, "ÏÑ§Ï†ï");
 
         AddTranslation("LANGUAGE", SupportedLanguage.French, "Langue");
         AddTranslation("LANGUAGE", SupportedLanguage.English, "Language");
         AddTranslation("LANGUAGE", SupportedLanguage.Spanish, "Idioma");
         AddTranslation("LANGUAGE", SupportedLanguage.Portuguese, "Idioma");
+        AddTranslation("LANGUAGE", SupportedLanguage.Korean, "Ïñ∏Ïñ¥");
 
-        AddTranslation("CONTROLS", SupportedLanguage.French, "contrÙles");
+        AddTranslation("CONTROLS", SupportedLanguage.French, "contr√¥les");
         AddTranslation("CONTROLS", SupportedLanguage.English, "Controls");
         AddTranslation("CONTROLS", SupportedLanguage.Spanish, "Controles");
         AddTranslation("CONTROLS", SupportedLanguage.Portuguese, "Controles");
+        AddTranslation("CONTROLS", SupportedLanguage.Korean, "Ï†úÏñ¥");
 
-        AddTranslation("VIDEO", SupportedLanguage.French, "VidÈo");
+        AddTranslation("VIDEO", SupportedLanguage.French, "Vid√©o");
         AddTranslation("VIDEO", SupportedLanguage.English, "Video");
-        AddTranslation("VIDEO", SupportedLanguage.Spanish, "VÌdeo");
-        AddTranslation("VIDEO", SupportedLanguage.Portuguese, "VidÈo");
+        AddTranslation("VIDEO", SupportedLanguage.Spanish, "V√≠deo");
+        AddTranslation("VIDEO", SupportedLanguage.Portuguese, "V√≠deo");
+        AddTranslation("VIDEO", SupportedLanguage.Korean, "ÎπÑÎîîÏò§");
 
         AddTranslation("AUDIO", SupportedLanguage.French, "Audio");
         AddTranslation("AUDIO", SupportedLanguage.English, "Audio");
         AddTranslation("AUDIO", SupportedLanguage.Spanish, "Audio");
-        AddTranslation("AUDIO", SupportedLanguage.Portuguese, "¡udio");
+        AddTranslation("AUDIO", SupportedLanguage.Portuguese, "√Åudio");
+        AddTranslation("AUDIO", SupportedLanguage.Korean, "Ïò§ÎîîÏò§");
 
         AddTranslation("BACK", SupportedLanguage.French, "Retour");
         AddTranslation("BACK", SupportedLanguage.English, "Back");
         AddTranslation("BACK", SupportedLanguage.Spanish, "Volver");
         AddTranslation("BACK", SupportedLanguage.Portuguese, "Voltar");
+        AddTranslation("BACK", SupportedLanguage.Korean, "Îí§Î°ú");
 
         AddTranslation("EXIT", SupportedLanguage.French, "Quitter");
         AddTranslation("EXIT", SupportedLanguage.English, "Exit");
         AddTranslation("EXIT", SupportedLanguage.Spanish, "Salir");
         AddTranslation("EXIT", SupportedLanguage.Portuguese, "Sair");
+        AddTranslation("EXIT", SupportedLanguage.Korean, "Ï¢ÖÎ£å");
 
-        AddTranslation("SPANISH", SupportedLanguage.French, "EspaÒol");
+        AddTranslation("SPANISH", SupportedLanguage.French, "Espagnol");
         AddTranslation("SPANISH", SupportedLanguage.English, "Spanish");
-        AddTranslation("SPANISH", SupportedLanguage.Spanish, "EspaÒol");
+        AddTranslation("SPANISH", SupportedLanguage.Spanish, "Espa√±ol");
         AddTranslation("SPANISH", SupportedLanguage.Portuguese, "Espanhol");
+        AddTranslation("SPANISH", SupportedLanguage.Korean, "Spanish");
 
         AddTranslation("PORTUGUESE", SupportedLanguage.French, "Portugais");
         AddTranslation("PORTUGUESE", SupportedLanguage.English, "Portuguese");
-        AddTranslation("PORTUGUESE", SupportedLanguage.Spanish, "PortuguÈs");
-        AddTranslation("PORTUGUESE", SupportedLanguage.Portuguese, "PortuguÍs");
+        AddTranslation("PORTUGUESE", SupportedLanguage.Spanish, "Portugu√©s");
+        AddTranslation("PORTUGUESE", SupportedLanguage.Portuguese, "Portugu√™s");
+        AddTranslation("PORTUGUESE", SupportedLanguage.Korean, "Portuguese");
 
-        AddTranslation("FRENCH", SupportedLanguage.French, "FranÁais");
+        AddTranslation("FRENCH", SupportedLanguage.French, "Fran√ßais");
         AddTranslation("FRENCH", SupportedLanguage.English, "French");
-        AddTranslation("FRENCH", SupportedLanguage.Spanish, "FrancÈs");
-        AddTranslation("FRENCH", SupportedLanguage.Portuguese, "FrancÍs");
+        AddTranslation("FRENCH", SupportedLanguage.Spanish, "Franc√©s");
+        AddTranslation("FRENCH", SupportedLanguage.Portuguese, "Franc√™s");
+        AddTranslation("FRENCH", SupportedLanguage.Korean, "French");
 
         AddTranslation("ENGLISH", SupportedLanguage.French, "Anglais");
         AddTranslation("ENGLISH", SupportedLanguage.English, "English");
-        AddTranslation("ENGLISH", SupportedLanguage.Spanish, "InglÈs");
-        AddTranslation("ENGLISH", SupportedLanguage.Portuguese, "InglÍs");
+        AddTranslation("ENGLISH", SupportedLanguage.Spanish, "Ingl√©s");
+        AddTranslation("ENGLISH", SupportedLanguage.Portuguese, "Ingl√™s");
+        AddTranslation("ENGLISH", SupportedLanguage.Korean, "English");
 
-
+        AddTranslation("KOREAN", SupportedLanguage.French, "Cor√©en");
+        AddTranslation("KOREAN", SupportedLanguage.English, "Korean");
+        AddTranslation("KOREAN", SupportedLanguage.Spanish, "Coreano");
+        AddTranslation("KOREAN", SupportedLanguage.Portuguese, "Coreano");
+        AddTranslation("KOREAN", SupportedLanguage.Korean, "Korean");
     }
 
     private void AddTranslation(string key, SupportedLanguage language, string translation)
@@ -136,7 +169,17 @@ public class LanguageSelection : MonoBehaviour
         selectedLanguage = supportedLanguages[index];
         Debug.Log("Idioma selecionado: " + selectedLanguage.ToString());
 
+        // Salva o √≠ndice do idioma selecionado no PlayerPrefs
+        PlayerPrefs.SetInt(LanguageIndexKey, index);
+        PlayerPrefs.Save();
+
+        // Exibe a mensagem de confirma√ß√£o
+        languageConfirmationCanvas.GetComponent<LanguageConfirmation>().ShowConfirmation(selectedLanguage);
+
         UpdateButtonTexts();
+
+        // Dispara o evento de mudan√ßa de idioma
+        OnLanguageChange?.Invoke();
     }
 
     private void UpdateButtonTexts()
@@ -147,12 +190,12 @@ public class LanguageSelection : MonoBehaviour
 
             if (buttonText != null)
             {
-                string translationKey = buttonText.text.ToLower(); // Converter para letras min˙sculas
+                string translationKey = buttonText.text.ToLower(); // Converter para letras min√∫sculas
 
-                // Verificar todas as chaves de traduÁ„o em letras min˙sculas
+                // Verificar todas as chaves de tradu√ß√£o em letras min√∫sculas
                 foreach (var translation in translations)
                 {
-                    string translationKeyLower = translation.Key.ToLower(); // Converter para letras min˙sculas
+                    string translationKeyLower = translation.Key.ToLower(); // Converter para letras min√∫sculas
 
                     if (translationKeyLower == translationKey)
                     {
@@ -165,4 +208,20 @@ public class LanguageSelection : MonoBehaviour
             }
         }
     }
+
+    public string GetTranslation(string key)
+    {
+        if (translations.ContainsKey(key))
+        {
+            return translations[key][selectedLanguage];
+        }
+        else
+        {
+            Debug.LogWarning("Chave de tradu√ß√£o n√£o encontrada: " + key);
+            return string.Empty;
+        }
+    }
+
+    // Evento de mudan√ßa de idioma
+    public event Action OnLanguageChange;
 }
