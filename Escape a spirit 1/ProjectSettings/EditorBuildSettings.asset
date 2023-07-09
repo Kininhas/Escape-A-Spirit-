@@ -6,9 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menu Inicial.unity
+    path: Assets/Scenes/Main Menu.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: "Assets/Scenes/Op\xE7oes.unity"
+    path: Assets/Scenes/Settings.unity
     guid: 604a5cf4bc2515c47b97ff387b0f41ea
+  - enabled: 1
+    path: Assets/Scenes/a mapping choice.unity
+    guid: d6276e32556fb9d498f99f9d4d39f6be
+  - enabled: 1
+    path: Assets/Scenes/Start Game.unity
+    guid: a93826a8d2064b942bb8db79388453e5
   m_configObjects: {}
